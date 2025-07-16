@@ -1,0 +1,26 @@
+.btn {
+  /* layout */
+  padding: 8px 20px;
+  border: none;
+  border-radius: 12px;
+  height: 48px;
+
+  /* typography */
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  /* colours */
+  background: var(--color-black);
+  color: var(--color-green);
+
+  /* interaction */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  opacity: 0.9;
+}

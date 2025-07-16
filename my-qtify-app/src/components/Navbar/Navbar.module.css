@@ -1,0 +1,22 @@
+.navbar {
+  background-color: var(--color-green);
+  height: 74px;
+  /* width: 100vw; */
+  padding: 0px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.buttonSection {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
