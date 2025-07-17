@@ -1,0 +1,28 @@
+.sectionContainer {
+  padding: 20px;
+  background-color: var(--color-black);
+  margin-bottom: 30px;
+  border-radius: 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-white);
+  margin-bottom: 16px;
+}
+
+.collapseBtn {
+  background: none;
+  border: none;
+  color: var(--color-green);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.albumGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
