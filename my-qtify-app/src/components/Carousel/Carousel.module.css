@@ -1,0 +1,64 @@
+/* Remove default Swiper navigation styles */
+:global(.swiper-button-prev),
+:global(.swiper-button-next) {
+  display: none !important;
+}
+
+.carouselContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.swiperContainer {
+  width: 100%;
+}
+
+.cardWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* Custom navigation buttons */
+.navButton {
+  top: 40%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background-color: #121212;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  /* transition: background-color 0.3s; */
+}
+
+.navButton img {
+  width: 20px;
+  height: 20px;
+}
+
+.leftButton {
+  left: 0;
+}
+
+.rightButton {
+  right: 0;
+}
+
+/* Hide buttons if disabled (handled via class toggle in component) */
+.navButtonHidden {
+  display: none;
+}
+
+/* Responsive slide size override if needed */
+@media (max-width: 768px) {
+  .swiperContainer {
+    padding: 0 20px;
+  }
+
+  .navButton {
+    width: 32px;
+    height: 32px;
+  }
+}
