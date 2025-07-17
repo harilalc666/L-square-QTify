@@ -26,3 +26,14 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
 }
+
+.customTabs {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
