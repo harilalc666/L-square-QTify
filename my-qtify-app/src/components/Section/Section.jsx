@@ -29,7 +29,7 @@ const Section = ({ title, endpoint }) => {
     <div className={styles.sectionContainer}>
       <div className={styles.header}>
         <h3>{title}</h3>
-        <button className={styles.collapseBtn}>{showAll ? "Collapse" : "Show All"}</button>
+        <button className={styles.collapseBtn} onClick={()=> setShowAll(!showAll)}>{showAll ? "Collapse" : "Show All"}</button>
       </div>
       { showAll  ? 
       <div className={styles.albumGrid}>
