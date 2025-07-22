@@ -4,7 +4,6 @@ function App() {
   const [flags, setFlags] = useState([]);
 
   useEffect(()=>{
-    try {
       async function fetchFlags() {
         const flagsData = await fetch('https://xcountries-backend.azurewebsites.net/all');
         const data = await flagsData.json();
@@ -12,9 +11,8 @@ function App() {
         
       }
       fetchFlags()
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-    }
+      .then(()=> console.log("successfully fetch data"))
+      .catch((error)=> console.error(`Error fetching data: ${error.message}`))
   }, []);
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "10px" }}>
