@@ -21,9 +21,19 @@ function App() {
     const fetchCityData = async (stateName) => {
     const data = await fetch(`https://crio-location-selector.onrender.com/country=${countries.selected}/state=${stateName}/cities`);
     const cityList = await data.json();
-
+    setState((prev)=>({
+      state: prev.state,
+      selected: stateName
+    }));
     setCity({city: cityList});
   };
+
+  const updateCityState = (selecedCity)=>{
+    setCity((prev)=>({
+      city: prev.city,
+      selected: selecedCity
+    }))
+  }
 
   useEffect(()=>{
     async function getCountryList(){
@@ -45,21 +55,22 @@ function App() {
   }, [])
 
   return (
-    <>
-      <h1>Select Location</h1>
-      <div style={{ display: "flex", justifyContent: "center"}}>
-        <SelectionDropDown data={countries.country} triggerFunction handleOptionChange={fetchStateData}/>
-        <SelectionDropDown data={state.state} triggerFunction handleOptionChange={fetchCityData}/>
-        <SelectionDropDown data={city.city} />
+      <div style={{display: "flex", justifyContent: "center", flexDirection: "column"}}>
+        <h1>Select Location</h1>
+        <div style = {{ display: "flex", justifyContent: "center"}}>
+          <SelectionDropDown data={countries.country} triggerFunction handleOptionChange={fetchStateData}/>
+          <SelectionDropDown data={state.state} triggerFunction handleOptionChange={fetchCityData}/>
+          <SelectionDropDown data={city.city} handleOptionChange={updateCityState}/>
+        </div>
+        {city.selected && <p>You selected <strong>{countries.selected}</strong>, {state.selected}, {city.selected}</p>}
       </div>
-    </>
   )
 }
 
-function SelectionDropDown({ data, handleOptionChange, triggerFunction }){
+function SelectionDropDown({ data, handleOptionChange }){
   return (
     <div>
-      <select defaultValue="" disabled={!data.length} onChange={(e)=> triggerFunction && handleOptionChange(e.target.value)}>
+      <select defaultValue="" disabled={!data.length} onChange={(e)=> handleOptionChange(e.target.value) }>
         <option disabled selected>Select Country</option>
         {data.length && data.map((item)=>(
           <option value={item} key={item}>{item}</option>
