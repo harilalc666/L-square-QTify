@@ -8,24 +8,32 @@ function App() {
 
 
   const fetchStateData = async (countryName) => {
-    countryName = encodeURIComponent(countryName);
-    const data = await fetch(`https://crio-location-selector.onrender.com/country=${countryName}/states`);
-    const stateList = await data.json();
-    setState({state: stateList});
-    setCountries((prev)=>({
-      country: prev.country,
-      selected: decodeURIComponent(countryName)
-    }));
+    try {
+      countryName = encodeURIComponent(countryName);
+      const data = await fetch(`https://crio-location-selector.onrender.com/country=${countryName}/states`);
+      const stateList = await data.json();
+      setState({state: stateList});
+      setCountries((prev)=>({
+        country: prev.country,
+        selected: decodeURIComponent(countryName)
+      }));
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
     const fetchCityData = async (stateName) => {
-    const data = await fetch(`https://crio-location-selector.onrender.com/country=${countries.selected}/state=${stateName}/cities`);
-    const cityList = await data.json();
-    setState((prev)=>({
-      state: prev.state,
-      selected: stateName
-    }));
-    setCity({city: cityList});
+      try {
+        const data = await fetch(`https://crio-location-selector.onrender.com/country=${countries.selected}/state=${stateName}/cities`);
+        const cityList = await data.json();
+        setState((prev)=>({
+          state: prev.state,
+          selected: stateName
+        }));
+        setCity({city: cityList});
+      } catch (error) {
+        console.error(error.message);
+      }
   };
 
   const updateCityState = (selecedCity)=>{
@@ -62,7 +70,7 @@ function App() {
           <SelectionDropDown data={state.state} triggerFunction handleOptionChange={fetchCityData}/>
           <SelectionDropDown data={city.city} handleOptionChange={updateCityState}/>
         </div>
-        {city.selected && <p>You selected <strong>{countries.selected}</strong>, {state.selected}, {city.selected}</p>}
+        {city.selected && <p>You selected {city.selected}, {state.selected}, {countries.selected}</p>}
       </div>
   )
 }
