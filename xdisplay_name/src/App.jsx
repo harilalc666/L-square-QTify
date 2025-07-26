@@ -42,7 +42,7 @@ function App() {
           submit
         </button>
       </form>
-        {isFormSubmit && <p>`Full Name: ${fullName.firstName} ${fullName.lastName}`</p>}
+        {isFormSubmit && <p>{`Full Name: ${fullName.firstName} ${fullName.lastName}`}</p>}
     </div>
   );
 }
