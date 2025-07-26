@@ -11,6 +11,7 @@ function App() {
 
   return (
     <div>
+      <h2>Full Name Display</h2>
       <form
         onSubmit={handleFormSubmit}
         style={{ display: "flex", flexDirection: "column" }}
