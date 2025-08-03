@@ -9,7 +9,7 @@ const data = [
 const style = {
   bottom: 0,
   transform: 'translate(0, -50%)',
-  lineHeight: '24px',
+  lineHeight: '5px',
 };
 
 const RADIAN = Math.PI / 180;
@@ -37,7 +37,7 @@ export default function ChartComponent() {
           cy="50%"
           labelLine={false}
           label={renderCustomizedLabel}
-          outerRadius={80}
+          outerRadius="70%"
           fill="#8884d8"
           dataKey="value"
         >

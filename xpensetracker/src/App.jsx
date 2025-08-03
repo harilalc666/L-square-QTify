@@ -22,8 +22,8 @@ import FoodIcon from "./assets/food.svg";
 import MovieIcon from "./assets/movie.svg";
 import AutoIcon from "./assets/auto.svg";
 import Barchart from "./components/bar-chart";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 function App() {
   const [page, setPage] = useState(1);
@@ -40,7 +40,7 @@ function App() {
     { name: "Pass", date: "March 22, 2024", amount: 50, category: "Travel" },
     { name: "Premium", date: "March 22, 2024", amount: 50, category: "Travel" },
   ];
-    
+
   const itemsPerPage = 3;
   const paginatedTransactions = transactions.slice(
     (page - 1) * itemsPerPage,
@@ -49,12 +49,14 @@ function App() {
   const pageCount = Math.ceil(transactions.length / itemsPerPage);
   return (
     <Box
-      style={{
+      sx={{
         display: "flex",
         flexDirection: "column",
-        marginLeft: "30px",
-        width: "1256px",
-        height: "781px",
+        px: { xs: 2, sm: 4, md: 6 },
+        width: "100%",
+        maxWidth: "1256px",
+        mx: "auto", // center horizontally
+        height: "100%",
       }}
     >
       <h1 style={{ color: "white" }}>Expense Tracker</h1>
@@ -62,13 +64,14 @@ function App() {
       <Box
         sx={{
           backgroundColor: "#626262",
-          height: "269px",
-          width: "1211px",
+          width: "100%",
+          flexWrap: "wrap",
           display: "flex",
+          gap: "30px",
           justifyContent: "start",
           alignItems: "center",
-          gap: "40px",
-          paddingLeft: "40px",
+          paddingLeft: "20px",
+          py: 2,
         }}
       >
         <CardComponent
@@ -83,32 +86,44 @@ function App() {
           buttonValue="Add Expense"
           buttonColor="#FF4747"
         />
-        <ChartComponent />
+        <Box sx={{ width: { xs: "100%", sm: "300px" }, height: "200px", marginLeft: "20px" }}>
+          <ChartComponent />
+        </Box>
       </Box>
 
       {/* main container bottom */}
       <Box
         sx={{
-          width: "1185px",
-          height: "345px",
-          marginTop: "77px",
+          width: "100%",
+          mt: 6,
           display: "flex",
-          justifyContent: "space-evenly",
-          gap: "30px",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 4,
+          justifyContent: "space-between",
         }}
       >
         {/* recent transaction container */}
-        <Box sx={{ width: "738px", height: "345px" }}>
+        <Box sx={{ width: { xs: "100%", md: "65%" } }}>
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", fontStyle: "italic", mb: 2 }}
+            sx={{
+              fontWeight: "bold",
+              fontStyle: "italic",
+              fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
+              mb: 2,
+            }}
           >
+            {" "}
             Recent Transactions
           </Typography>
           <Box sx={{ backgroundColor: "white", borderRadius: "10px" }}>
             <List>
               {paginatedTransactions.map((tx, idx) => (
-                <ListItem key={idx} divider>
+                <ListItem
+                  key={idx}
+                  divider
+                  sx={{ flexWrap: "wrap", justifyContent: "space-between" }}
+                >
                   <ListItemIcon>
                     {tx.category === "Food" && (
                       <img src={FoodIcon} alt="food" />
@@ -127,11 +142,8 @@ function App() {
                   <IconButton
                     size="small"
                     sx={{
-                      background: "#FF4747",
-                      color: "#fff",
-                      ml: 1,
-                      mr: 1,
-                      "&:hover": { background: "#d32f2f" },
+                      mx: 1,
+                      p: { xs: 0.5, sm: 1 },
                     }}
                   >
                     <DeleteIcon />
@@ -156,22 +168,27 @@ function App() {
                 onChange={(_, value) => setPage(value)}
                 shape="rounded"
                 color="primary"
-                       renderItem={(item) => (
-                <PaginationItem
-                  slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
-                  {...item}
-                />
-              )} 
+                renderItem={(item) => (
+                  <PaginationItem
+                    slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                    {...item}
+                  />
+                )}
               />
             </Box>
           </Box>
         </Box>
 
         {/* top expenses container */}
-        <Box sx={{ width: "417px", height: "345px" }}>
+        <Box sx={{ width: { xs: "100%", md: "35%" } }}>
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", fontStyle: "italic", mb: 2 }}
+            sx={{
+              fontWeight: "bold",
+              fontStyle: "italic",
+              fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
+              mb: 2,
+            }}
           >
             Top Expenses
           </Typography>
@@ -188,12 +205,14 @@ function CardComponent({ title, amount, buttonValue, buttonColor }) {
   return (
     <Card
       sx={{
-        width: "760px",
-        height: "181px",
+        width: { xs: "100%", sm: "300px", md: "300px" },
+        height: "auto",
+        textAlign: "center",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "column",
+        p: 2,
         backgroundColor: "#dbd7d7",
         borderRadius: "15px",
       }}
