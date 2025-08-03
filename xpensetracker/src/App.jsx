@@ -277,58 +277,61 @@ function App() {
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
             {editIdx !== null ? "Edit Expense" : "Add Expenses"}
           </Typography>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField
-              placeholder="Title"
-              name="title"
-              value={form.title}
-              onChange={handleFormChange}
-              required
-              fullWidth
-              sx={{ background: "#fff", borderRadius: 2 }}
-              inputProps={{ "data-testid": "expense-title-input" }}
-            />
-            <TextField
-              placeholder="Price"
-              name="price"
-              type="number"
-              value={form.price}
-              onChange={handleFormChange}
-              required
-              fullWidth
-              inputProps={{ min: 1, "data-testid": "expense-price-input" }}
-              sx={{ background: "#fff", borderRadius: 2 }}
-            />
-          </Box>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField
-              placeholder="Select Category"
-              name="category"
-              value={form.category}
-              onChange={handleFormChange}
-              required
-              select
-              fullWidth
-              sx={{ background: "#fff", borderRadius: 2 }}
-              inputProps={{ "data-testid": "expense-category-dropdown" }}
-            >
-              <MenuItem value="Food">Food</MenuItem>
-              <MenuItem value="Entertainment">Entertainment</MenuItem>
-              <MenuItem value="Travel">Travel</MenuItem>
-              {/* Add more categories as needed */}
-            </TextField>
-            <TextField
-              placeholder="dd/mm/yyyy"
-              name="date"
-              type="date"
-              value={form.date}
-              onChange={handleFormChange}
-              required
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              sx={{ background: "#fff", borderRadius: 2 }}
-              inputProps={{ "data-testid": "expense-date-input" }}
-            />
+          {/* All fields in a single Box for test compatibility */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                placeholder="Title"
+                name="title"
+                value={form.title}
+                onChange={handleFormChange}
+                required
+                fullWidth
+                sx={{ background: "#fff", borderRadius: 2 }}
+                inputProps={{ "data-testid": "expense-title-input" }}
+              />
+              <TextField
+                placeholder="Price"
+                name="price"
+                type="number"
+                value={form.price}
+                onChange={handleFormChange}
+                required
+                fullWidth
+                inputProps={{ min: 1, "data-testid": "expense-price-input" }}
+                sx={{ background: "#fff", borderRadius: 2 }}
+              />
+            </Box>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                placeholder="Select Category"
+                name="category"
+                value={form.category}
+                onChange={handleFormChange}
+                required
+                select
+                fullWidth
+                sx={{ background: "#fff", borderRadius: 2 }}
+                inputProps={{ "data-testid": "expense-category-dropdown" }}
+              >
+                <MenuItem value="Food">Food</MenuItem>
+                <MenuItem value="Entertainment">Entertainment</MenuItem>
+                <MenuItem value="Travel">Travel</MenuItem>
+                {/* Add more categories as needed */}
+              </TextField>
+              <TextField
+                placeholder="dd/mm/yyyy"
+                name="date"
+                type="date"
+                value={form.date}
+                onChange={handleFormChange}
+                required
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+                sx={{ background: "#fff", borderRadius: 2 }}
+                inputProps={{ "data-testid": "expense-date-input" }}
+              />
+            </Box>
           </Box>
           <Box sx={{ display: "flex", gap: 2 }}>
             <Button
