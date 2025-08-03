@@ -7,13 +7,13 @@ import {
   LabelList,
 } from 'recharts';
 
-const data = [
-  { name: 'entertainment', value: 800 },
-  { name: 'travel', value: 967 },
-  { name: 'food', value: 1098 },
-];
+// const data = [
+//   { category: 'entertainment', amount: 800 },
+//   { category: 'travel', amount: 967 },
+//   { category: 'food', amount: 1098 },
+// ];
 
-const Barchart = () => {
+const Barchart = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={230}>
       <ComposedChart
@@ -25,15 +25,15 @@ const Barchart = () => {
       >
         <XAxis type="number" hide />
         <YAxis
-          dataKey="name"
+          dataKey="category"
           type="category"
           axisLine={false}
           tick={false} // Hide Y axis labels
           width={100}
         />
-        <Bar dataKey="value" barSize={20} fill="#413ea0" radius={[0, 10, 10, 0]}>
+        <Bar dataKey="amount" barSize={20} fill="#413ea0" radius={[0, 10, 10, 0]}>
           <LabelList
-            dataKey="name"
+            dataKey="category"
             position="left"
             offset={10}
             style={{ fill: '#222', fontWeight: 'bold', textTransform: 'capitalize' }}

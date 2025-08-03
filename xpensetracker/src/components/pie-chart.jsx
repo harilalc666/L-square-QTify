@@ -1,10 +1,10 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Legend } from 'recharts';
 
-const data = [
-  { name: 'Food', value: 400 },
-  { name: 'Entertainment', value: 300 },
-  { name: 'Travel', value: 300 },
-];
+// const data = [
+//   { category: 'Food', amount: 400 },
+//   { category: 'Entertainment', amount: 300 },
+//   { category: 'Travel', amount: 300 },
+// ];
 
 const style = {
   bottom: 0,
@@ -27,7 +27,7 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
-export default function ChartComponent() {
+export default function ChartComponent({ data }) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart width={199} height={199}>
@@ -39,10 +39,10 @@ export default function ChartComponent() {
           label={renderCustomizedLabel}
           outerRadius="70%"
           fill="#8884d8"
-          dataKey="value"
+          dataKey="amount"
         >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
+          {data.length && data.map((entry, index) => (
+            <Cell key={`cell-${entry.category}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
       <Legend iconSize={10} layout="horizontal" verticalAlign="middle" wrapperStyle={style} />

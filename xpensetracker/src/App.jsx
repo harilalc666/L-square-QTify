@@ -11,8 +11,11 @@ import {
   Typography,
   List,
   PaginationItem,
+  Modal,
+  TextField,
+  MenuItem,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,28 +28,112 @@ import Barchart from "./components/bar-chart";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
+const getLocalData = (key, defaultValue) => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : defaultValue;
+};
+const setLocalData = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
+
 function App() {
+  // State for expenses and wallet
+  const [expenses, setExpenses] = useState(() => getLocalData("expenses", []));
+  const [wallet, setWallet] = useState(() => getLocalData("wallet", 5000));
+  const [incomeModalOpen, setIncomeModalOpen] = useState(false);
+  const [incomeAmount, setIncomeAmount] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editIdx, setEditIdx] = useState(null);
+
+  // Form state
+  const [form, setForm] = useState({
+    title: "",
+    amount: "",
+    category: "",
+    date: "",
+  });
+
+  // Pagination
   const [page, setPage] = useState(1);
-
-  const transactions = [
-    { name: "Samosa", date: "March 20, 2024", amount: 150, category: "Food" },
-    {
-      name: "Movie",
-      date: "March 21, 2024",
-      amount: 300,
-      category: "Entertainment",
-    },
-    { name: "Auto", date: "March 22, 2024", amount: 50, category: "Travel" },
-    { name: "Pass", date: "March 22, 2024", amount: 50, category: "Travel" },
-    { name: "Premium", date: "March 22, 2024", amount: 50, category: "Travel" },
-  ];
-
   const itemsPerPage = 3;
-  const paginatedTransactions = transactions.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
-  const pageCount = Math.ceil(transactions.length / itemsPerPage);
+  const paginatedExpenses = expenses.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const pageCount = Math.ceil(expenses.length / itemsPerPage);
+
+  // Persist to localStorage
+  useEffect(() => {
+    setLocalData("expenses", expenses);
+    setLocalData("wallet", wallet);
+  }, [expenses, wallet]);
+
+  // Handle form input
+  const handleFormChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Add Income handler
+  const handleAddIncome = (e) => {
+    e.preventDefault();
+    const amt = parseFloat(incomeAmount);
+    if (!amt || amt <= 0) return;
+    setWallet(wallet + amt);
+    setIncomeAmount("");
+    setIncomeModalOpen(false);
+  };  
+
+  // Open modal for add/edit expenses
+  const openModalForExpense = (idx = null) => {
+    setEditIdx(idx);
+    if (idx !== null) {
+      setForm(expenses[idx]);
+    } else {
+      setForm({ title: "", amount: "", category: "", date: "" });
+    }
+    setModalOpen(true);
+  };
+
+
+  // Add or Edit Expense
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (!form.title || !form.amount || !form.category || !form.date) return;
+    const amt = parseFloat(form.amount);
+    let newExpenses, newWallet;
+    if (editIdx !== null) {
+      // Edit
+      const oldAmt = parseFloat(expenses[editIdx].amount);
+      newExpenses = expenses.map((exp, idx) => (idx === editIdx ? form : exp));
+      newWallet = wallet + oldAmt - amt;
+    } else {
+      // Add
+      newExpenses = [...expenses, form];
+      newWallet = wallet - amt;
+    }
+    setExpenses(newExpenses);
+    setWallet(newWallet);
+    setModalOpen(false);
+    setEditIdx(null);
+    setForm({ title: "", amount: "", category: "", date: "" });
+  };
+
+  // Delete Expense
+  const handleDelete = (idx) => {
+    const amt = parseFloat(expenses[idx].amount);
+    setWallet(wallet + amt);
+    setExpenses(expenses.filter((_, i) => i !== idx));
+  };
+
+// Calculate summary for charts
+const categoryTotals = expenses.reduce((acc, exp) => {
+  acc[exp.category] = (acc[exp.category] || 0) + parseFloat(exp.amount);
+  return acc;
+}, {});
+
+// Convert to array of objects for charts
+const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
+  category,
+  amount,
+}));
+
   return (
     <Box
       sx={{
@@ -76,20 +163,204 @@ function App() {
       >
         <CardComponent
           title="Wallet Balance"
-          amount={5000}
+          amount={wallet}
           buttonValue="Add Income"
           buttonColor="#89E148"
+          onButtonClick={() => setIncomeModalOpen(true)}
         />
         <CardComponent
           title="Expenses"
-          amount={0}
+          amount={expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0)}
           buttonValue="Add Expense"
           buttonColor="#FF4747"
+          onButtonClick={() => openModalForExpense()}
         />
         <Box sx={{ width: { xs: "100%", sm: "300px" }, height: "200px", marginLeft: "20px" }}>
-          <ChartComponent />
+          <ChartComponent data={chartData} />
         </Box>
       </Box>
+
+ {/* Add Income Modal */}
+      <Modal open={incomeModalOpen} onClose={() => setIncomeModalOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: { xs: 2, sm: 4 },
+            borderRadius: 3,
+            minWidth: 300,
+            width: { xs: "90vw", sm: 400 },
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+          component="form"
+          onSubmit={handleAddIncome}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+            Add Balance
+          </Typography>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              placeholder="Income Amount"
+              name="incomeAmount"
+              type="number"
+              value={incomeAmount}
+              onChange={(e) => setIncomeAmount(e.target.value)}
+              required
+              fullWidth
+              inputProps={{ min: 1 }}
+              sx={{
+                background: "#fff",
+                borderRadius: 2,
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                background: "#FFC940",
+                color: "#222",
+                fontWeight: 600,
+                px: 3,
+                borderRadius: 2,
+                boxShadow: "none",
+                "&:hover": { background: "#FFD966" },
+              }}
+            >
+              Add Balance
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setIncomeModalOpen(false)}
+              sx={{
+                background: "#E0E0E0",
+                color: "#222",
+                fontWeight: 600,
+                px: 3,
+                borderRadius: 2,
+                boxShadow: "none",
+                "&:hover": { background: "#bdbdbd" },
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>      
+
+      {/* Expense Modal */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: { xs: 2, sm: 4 },
+            borderRadius: 3,
+            minWidth: 320,
+            width: { xs: "95vw", sm: 500 },
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+          component="form"
+          onSubmit={handleFormSubmit}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+            {editIdx !== null ? "Edit Expense" : "Add Expenses"}
+          </Typography>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              placeholder="Title"
+              name="title"
+              value={form.title}
+              onChange={handleFormChange}
+              required
+              fullWidth
+              sx={{ background: "#fff", borderRadius: 2 }}
+            />
+            <TextField
+              placeholder="Price"
+              name="amount"
+              type="number"
+              value={form.amount}
+              onChange={handleFormChange}
+              required
+              fullWidth
+              inputProps={{ min: 1 }}
+              sx={{ background: "#fff", borderRadius: 2 }}
+            />
+          </Box>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              placeholder="Select Category"
+              name="category"
+              value={form.category}
+              onChange={handleFormChange}
+              required
+              select
+              fullWidth
+              sx={{ background: "#fff", borderRadius: 2 }}
+            >
+              <MenuItem value="Food">Food</MenuItem>
+              <MenuItem value="Entertainment">Entertainment</MenuItem>
+              <MenuItem value="Travel">Travel</MenuItem>
+              {/* Add more categories as needed */}
+            </TextField>
+            <TextField
+              placeholder="dd/mm/yyyy"
+              name="date"
+              type="date"
+              value={form.date}
+              onChange={handleFormChange}
+              required
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              sx={{ background: "#fff", borderRadius: 2 }}
+            />
+          </Box>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                background: "#FFC940",
+                color: "#222",
+                fontWeight: 600,
+                px: 4,
+                borderRadius: 2,
+                boxShadow: "none",
+                "&:hover": { background: "#FFD966" },
+              }}
+            >
+              {editIdx !== null ? "Update" : "Add Expense"}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setModalOpen(false)}
+              sx={{
+                background: "#E0E0E0",
+                color: "#222",
+                fontWeight: 600,
+                px: 4,
+                borderRadius: 2,
+                boxShadow: "none",
+                "&:hover": { background: "#bdbdbd" },
+              }}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
 
       {/* main container bottom */}
       <Box
@@ -118,7 +389,7 @@ function App() {
           </Typography>
           <Box sx={{ backgroundColor: "white", borderRadius: "10px" }}>
             <List>
-              {paginatedTransactions.map((tx, idx) => (
+              {paginatedExpenses.length == 0 ? "No Transactions!" : paginatedExpenses.map((tx, idx) => (
                 <ListItem
                   key={idx}
                   divider
@@ -135,7 +406,7 @@ function App() {
                       <img src={AutoIcon} alt="auto" />
                     )}
                   </ListItemIcon>
-                  <ListItemText primary={tx.name} secondary={tx.date} />
+                  <ListItemText primary={tx.title} secondary={tx.date} />
                   <Typography sx={{ color: "#FFA500", fontWeight: "bold" }}>
                     ₹{tx.amount}
                   </Typography>
@@ -145,6 +416,7 @@ function App() {
                       mx: 1,
                       p: { xs: 0.5, sm: 1 },
                     }}
+                    onClick={() => handleDelete((page - 1) * itemsPerPage + idx)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -155,13 +427,14 @@ function App() {
                       color: "#fff",
                       "&:hover": { background: "#FFC107" },
                     }}
+                    onClick={() => openModalForExpense((page - 1) * itemsPerPage + idx)}
                   >
                     <EditIcon />
                   </IconButton>
                 </ListItem>
               ))}
             </List>
-            <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+            {paginatedExpenses.length !== 0 && <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
               <Pagination
                 count={pageCount}
                 page={page}
@@ -175,7 +448,7 @@ function App() {
                   />
                 )}
               />
-            </Box>
+            </Box>}
           </Box>
         </Box>
 
@@ -193,7 +466,7 @@ function App() {
             Top Expenses
           </Typography>
           <Box sx={{ backgroundColor: "white", borderRadius: "10px" }}>
-            <Barchart />
+            <Barchart data={chartData} />
           </Box>
         </Box>
       </Box>
@@ -201,7 +474,7 @@ function App() {
   );
 }
 
-function CardComponent({ title, amount, buttonValue, buttonColor }) {
+function CardComponent({ title, amount, buttonValue, buttonColor, onButtonClick }) {
   return (
     <Card
       sx={{
@@ -221,7 +494,11 @@ function CardComponent({ title, amount, buttonValue, buttonColor }) {
         <Typography>{`${title}: ${amount}`}</Typography>
       </CardContent>
       <CardActions>
-        <Button variant="contained" sx={{ backgroundColor: `${buttonColor}` }}>
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: `${buttonColor}` }}
+          onClick={onButtonClick}
+        >
           + {buttonValue}
         </Button>
       </CardActions>
