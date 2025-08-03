@@ -301,22 +301,29 @@ function App() {
               inputProps={{ min: 1, "data-testid": "expense-price-input" }}
               sx={{ background: "#fff", borderRadius: 2 }}
             />
-            <Select 
-              placeholder="Select Category"
-              name="category"
-              value={form.category}
-              onChange={handleFormChange}
-              required
-              select
-              fullWidth
-              sx={{ background: "#fff", borderRadius: 2 }}
-              inputProps={{ "data-testid": "expense-category-dropdown" }}
-            >
-              <MenuItem value="Food">Food</MenuItem>
-              <MenuItem value="Entertainment">Entertainment</MenuItem>
-              <MenuItem value="Travel">Travel</MenuItem>
-              {/* Add more categories as needed */}
-            </Select >
+            <Box>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleFormChange}
+                required
+                style={{
+                  width: "100%",
+                  padding: "16.5px 14px",
+                  borderRadius: "16px",
+                  border: "1px solid #ccc",
+                  fontSize: "1rem",
+                  marginBottom: "8px",
+                  background: "#fff"
+                }}
+                data-testid="expense-category-dropdown"
+              >
+                <option value="" disabled>Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Travel">Travel</option>
+              </select>
+            </Box>
             <TextField
               placeholder="dd/mm/yyyy"
               name="date"
