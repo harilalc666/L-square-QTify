@@ -14,6 +14,7 @@ import {
   Modal,
   TextField,
   MenuItem,
+  Select
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import Pagination from "@mui/material/Pagination";
@@ -300,7 +301,7 @@ function App() {
               inputProps={{ min: 1, "data-testid": "expense-price-input" }}
               sx={{ background: "#fff", borderRadius: 2 }}
             />
-            <TextField
+            <Select 
               placeholder="Select Category"
               name="category"
               value={form.category}
@@ -315,7 +316,7 @@ function App() {
               <MenuItem value="Entertainment">Entertainment</MenuItem>
               <MenuItem value="Travel">Travel</MenuItem>
               {/* Add more categories as needed */}
-            </TextField>
+            </Select >
             <TextField
               placeholder="dd/mm/yyyy"
               name="date"
