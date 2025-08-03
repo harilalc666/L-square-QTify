@@ -48,7 +48,7 @@ function App() {
   // Form state
   const [form, setForm] = useState({
     title: "",
-    amount: "",
+    price: "",
     category: "",
     date: "",
   });
@@ -78,7 +78,7 @@ function App() {
     setWallet(wallet + amt);
     setIncomeAmount("");
     setIncomeModalOpen(false);
-  };  
+  };
 
   // Open modal for add/edit expenses
   const openModalForExpense = (idx = null) => {
@@ -86,21 +86,20 @@ function App() {
     if (idx !== null) {
       setForm(expenses[idx]);
     } else {
-      setForm({ title: "", amount: "", category: "", date: "" });
+      setForm({ title: "", price: "", category: "", date: "" });
     }
     setModalOpen(true);
   };
 
-
   // Add or Edit Expense
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (!form.title || !form.amount || !form.category || !form.date) return;
-    const amt = parseFloat(form.amount);
+    if (!form.title || !form.price || !form.category || !form.date) return;
+    const amt = parseFloat(form.price);
     let newExpenses, newWallet;
     if (editIdx !== null) {
       // Edit
-      const oldAmt = parseFloat(expenses[editIdx].amount);
+      const oldAmt = parseFloat(expenses[editIdx].price);
       newExpenses = expenses.map((exp, idx) => (idx === editIdx ? form : exp));
       newWallet = wallet + oldAmt - amt;
     } else {
@@ -112,27 +111,27 @@ function App() {
     setWallet(newWallet);
     setModalOpen(false);
     setEditIdx(null);
-    setForm({ title: "", amount: "", category: "", date: "" });
+    setForm({ title: "", price: "", category: "", date: "" });
   };
 
   // Delete Expense
   const handleDelete = (idx) => {
-    const amt = parseFloat(expenses[idx].amount);
+    const amt = parseFloat(expenses[idx].price);
     setWallet(wallet + amt);
     setExpenses(expenses.filter((_, i) => i !== idx));
   };
 
-// Calculate summary for charts
-const categoryTotals = expenses.reduce((acc, exp) => {
-  acc[exp.category] = (acc[exp.category] || 0) + parseFloat(exp.amount);
-  return acc;
-}, {});
+  // Calculate summary for charts
+  const categoryTotals = expenses.reduce((acc, exp) => {
+    acc[exp.category] = (acc[exp.category] || 0) + parseFloat(exp.price);
+    return acc;
+  }, {});
 
-// Convert to array of objects for charts
-const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
-  category,
-  amount,
-}));
+  // Convert to array of objects for charts
+  const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
+    category,
+    amount,
+  }));
 
   return (
     <Box
@@ -142,7 +141,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
         px: { xs: 2, sm: 4, md: 6 },
         width: "100%",
         maxWidth: "1256px",
-        mx: "auto", // center horizontally
+        mx: "auto",
         height: "100%",
       }}
     >
@@ -163,14 +162,14 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
       >
         <CardComponent
           title="Wallet Balance"
-          amount={wallet}
+          amount={`₹${wallet}`}
           buttonValue="Add Income"
           buttonColor="#89E148"
           onButtonClick={() => setIncomeModalOpen(true)}
         />
         <CardComponent
           title="Expenses"
-          amount={expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0)}
+          amount={`₹${expenses.reduce((sum, exp) => sum + parseFloat(exp.price), 0)}`}
           buttonValue="Add Expense"
           buttonColor="#FF4747"
           onButtonClick={() => openModalForExpense()}
@@ -180,7 +179,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
         </Box>
       </Box>
 
- {/* Add Income Modal */}
+      {/* Add Income Modal */}
       <Modal open={incomeModalOpen} onClose={() => setIncomeModalOpen(false)}>
         <Box
           sx={{
@@ -235,6 +234,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
               Add Balance
             </Button>
             <Button
+              type="button"
               variant="contained"
               onClick={() => setIncomeModalOpen(false)}
               sx={{
@@ -251,7 +251,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
             </Button>
           </Box>
         </Box>
-      </Modal>      
+      </Modal>
 
       {/* Expense Modal */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
@@ -286,16 +286,17 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
               required
               fullWidth
               sx={{ background: "#fff", borderRadius: 2 }}
+              inputProps={{ "data-testid": "expense-title-input" }}
             />
             <TextField
               placeholder="Price"
-              name="amount"
+              name="price"
               type="number"
-              value={form.amount}
+              value={form.price}
               onChange={handleFormChange}
               required
               fullWidth
-              inputProps={{ min: 1 }}
+              inputProps={{ min: 1, "data-testid": "expense-price-input" }}
               sx={{ background: "#fff", borderRadius: 2 }}
             />
           </Box>
@@ -309,6 +310,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
               select
               fullWidth
               sx={{ background: "#fff", borderRadius: 2 }}
+              inputProps={{ "data-testid": "expense-category-dropdown" }}
             >
               <MenuItem value="Food">Food</MenuItem>
               <MenuItem value="Entertainment">Entertainment</MenuItem>
@@ -325,6 +327,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
               fullWidth
               InputLabelProps={{ shrink: true }}
               sx={{ background: "#fff", borderRadius: 2 }}
+              inputProps={{ "data-testid": "expense-date-input" }}
             />
           </Box>
           <Box sx={{ display: "flex", gap: 2 }}>
@@ -344,6 +347,7 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
               {editIdx !== null ? "Update" : "Add Expense"}
             </Button>
             <Button
+              type="button"
               variant="contained"
               onClick={() => setModalOpen(false)}
               sx={{
@@ -384,71 +388,74 @@ const chartData = Object.entries(categoryTotals).map(([category, amount]) => ({
               mb: 2,
             }}
           >
-            {" "}
             Recent Transactions
           </Typography>
           <Box sx={{ backgroundColor: "white", borderRadius: "10px" }}>
             <List>
-              {paginatedExpenses.length == 0 ? "No Transactions!" : paginatedExpenses.map((tx, idx) => (
-                <ListItem
-                  key={idx}
-                  divider
-                  sx={{ flexWrap: "wrap", justifyContent: "space-between" }}
-                >
-                  <ListItemIcon>
-                    {tx.category === "Food" && (
-                      <img src={FoodIcon} alt="food" />
-                    )}
-                    {tx.category === "Entertainment" && (
-                      <img src={MovieIcon} alt="movie" />
-                    )}
-                    {tx.category === "Travel" && (
-                      <img src={AutoIcon} alt="auto" />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText primary={tx.title} secondary={tx.date} />
-                  <Typography sx={{ color: "#FFA500", fontWeight: "bold" }}>
-                    ₹{tx.amount}
-                  </Typography>
-                  <IconButton
-                    size="small"
-                    sx={{
-                      mx: 1,
-                      p: { xs: 0.5, sm: 1 },
-                    }}
-                    onClick={() => handleDelete((page - 1) * itemsPerPage + idx)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    sx={{
-                      background: "#FFD700",
-                      color: "#fff",
-                      "&:hover": { background: "#FFC107" },
-                    }}
-                    onClick={() => openModalForExpense((page - 1) * itemsPerPage + idx)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </ListItem>
-              ))}
+              {paginatedExpenses.length === 0
+                ? "No Transactions!"
+                : paginatedExpenses.map((tx, idx) => (
+                    <ListItem
+                      key={idx}
+                      divider
+                      sx={{ flexWrap: "wrap", justifyContent: "space-between" }}
+                    >
+                      <ListItemIcon>
+                        {tx.category === "Food" && (
+                          <img src={FoodIcon} alt="food" />
+                        )}
+                        {tx.category === "Entertainment" && (
+                          <img src={MovieIcon} alt="movie" />
+                        )}
+                        {tx.category === "Travel" && (
+                          <img src={AutoIcon} alt="auto" />
+                        )}
+                      </ListItemIcon>
+                      <ListItemText primary={tx.title} secondary={tx.date} />
+                      <Typography sx={{ color: "#FFA500", fontWeight: "bold" }}>
+                        ₹{tx.price}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        sx={{
+                          mx: 1,
+                          p: { xs: 0.5, sm: 1 },
+                        }}
+                        onClick={() => handleDelete((page - 1) * itemsPerPage + idx)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        sx={{
+                          background: "#FFD700",
+                          color: "#fff",
+                          "&:hover": { background: "#FFC107" },
+                        }}
+                        onClick={() => openModalForExpense((page - 1) * itemsPerPage + idx)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </ListItem>
+                  ))}
             </List>
-            {paginatedExpenses.length !== 0 && <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-              <Pagination
-                count={pageCount}
-                page={page}
-                onChange={(_, value) => setPage(value)}
-                shape="rounded"
-                color="primary"
-                renderItem={(item) => (
-                  <PaginationItem
-                    slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
-                    {...item}
-                  />
-                )}
-              />
-            </Box>}
+            {paginatedExpenses.length !== 0 && (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+                <Pagination
+                  count={pageCount}
+                  page={page}
+                  onChange={(_, value) => setPage(value)}
+                  shape="rounded"
+                  color="primary"
+                  renderItem={(item) => (
+                    <PaginationItem
+                      slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                      {...item}
+                    />
+                  )}
+                />
+              </Box>
+            )}
           </Box>
         </Box>
 
@@ -495,6 +502,7 @@ function CardComponent({ title, amount, buttonValue, buttonColor, onButtonClick 
       </CardContent>
       <CardActions>
         <Button
+          type="button"
           variant="contained"
           sx={{ backgroundColor: `${buttonColor}` }}
           onClick={onButtonClick}
