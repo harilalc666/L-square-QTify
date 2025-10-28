@@ -1,0 +1,99 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* General App Container */
+.app-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Search Bar Styling */
+.search-bar-container {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Countries Grid Layout (using Flexbox) */
+.countries-grid {
+  display: flex;
+  /* Allows cards to wrap to the next line */
+  flex-wrap: wrap;
+  /* Centers the cards if there aren't enough to fill the row */
+  justify-content: center; 
+  gap: 20px; /* Space between cards */
+}
+
+/* Country Card Styling */
+.countryCard {
+  /* This flex basis ensures 6 cards fit roughly per row on a large screen 
+     and allows wrapping for smaller screens. */
+  flex: 0 0 calc(16.666% - 20px); /* Adjusting for gap */
+  min-width: 150px; /* Minimum size for the card */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  background-color: #fff;
+}
+
+.countryCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Flag Image Styling */
+.flag-image {
+  width: 100%;
+  height: auto;
+  /* Maintain aspect ratio */
+  aspect-ratio: 3 / 2;
+  object-fit: contain; /* Ensures the whole flag is visible */
+  border: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+}
+
+/* Country Name Styling */
+.country-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Messages */
+.loading-message,
+.error-message,
+.no-results-message {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.error-message {
+  color: red;
+}
